@@ -1,15 +1,10 @@
 package des.c5inco.pokedexer.ui.parties
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -23,14 +18,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import des.c5inco.pokedexer.R
 import des.c5inco.pokedexer.model.Pokemon
 import des.c5inco.pokedexer.ui.common.LoadingIndicator
 import des.c5inco.pokedexer.ui.common.Pokeball
 import des.c5inco.pokedexer.ui.pokedex.PokedexCard
+
+private const val CardScaleDecrement = 0.075f
+private const val CardRotationFactor = 8f
+private const val CardVerticalOffset = 40f
 
 @Composable
 fun PartyDetailsScreenRoute(
@@ -113,16 +114,28 @@ fun PartyDetailsScreen(
                     }
                 }
                 is PartyDetailsUiState.Ready -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 12.dp),
+                        contentAlignment = Alignment.TopCenter
                     ) {
-                        items(uiState.pokemon) { pokemon ->
+                        uiState.pokemon.forEachIndexed { index, pokemon ->
+                            val zIndex = (uiState.pokemon.size - index).toFloat()
+                            val scale = 1f - (index * CardScaleDecrement)
+                            val rotation = (index - ((uiState.pokemon.size - 1) / 2f)) * CardRotationFactor
+
                             PokedexCard(
                                 pokemon = pokemon,
-                                onPokemonSelected = onPokemonSelected
+                                onPokemonSelected = onPokemonSelected,
+                                modifier = Modifier
+                                    .zIndex(zIndex)
+                                    .graphicsLayer {
+                                        translationY = index * CardVerticalOffset
+                                        scaleX = scale
+                                        scaleY = scale
+                                        rotationZ = rotation
+                                    }
                             )
                         }
                     }
