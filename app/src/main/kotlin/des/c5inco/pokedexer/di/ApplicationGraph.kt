@@ -17,10 +17,14 @@ import des.c5inco.pokedexer.data.PokemonDatabase
 import des.c5inco.pokedexer.data.abilities.AbilitiesDao
 import des.c5inco.pokedexer.data.items.ItemsDao
 import des.c5inco.pokedexer.data.moves.MovesDao
+import des.c5inco.pokedexer.data.parties.PartiesDao
 import des.c5inco.pokedexer.data.pokemon.PokemonDao
 import des.c5inco.pokedexer.ui.home.HomeViewModel
 import des.c5inco.pokedexer.ui.items.ItemsViewModel
 import des.c5inco.pokedexer.ui.moves.MovesListViewModel
+import des.c5inco.pokedexer.ui.parties.CreatePartyViewModel
+import des.c5inco.pokedexer.ui.parties.PartiesViewModel
+import des.c5inco.pokedexer.ui.parties.PartyDetailsViewModel
 import des.c5inco.pokedexer.ui.pokedex.PokedexViewModel
 import des.c5inco.pokedexer.ui.pokedex.PokemonDetailsViewModel
 import dev.zacsweers.metro.ContributesTo
@@ -78,6 +82,11 @@ interface ApplicationModule {
         return database.abilitiesDao()
     }
 
+    @Provides
+    fun providePartiesDao(database: PokemonDatabase): PartiesDao {
+        return database.partiesDao()
+    }
+
     // Network
     @Provides
     @SingleIn(AppScope::class)
@@ -125,10 +134,13 @@ interface ApplicationGraph {
     val homeViewModel: HomeViewModel
     val movesListViewModel: MovesListViewModel
     val itemsViewModel: ItemsViewModel
+    val partiesViewModel: PartiesViewModel
 
     // Factories for assisted injection ViewModels
     val pokedexViewModelFactory: PokedexViewModel.Factory
     val pokemonDetailsViewModelFactory: PokemonDetailsViewModel.PokemonDetailsViewModelFactory
+    val createPartyViewModelFactory: CreatePartyViewModel.Factory
+    val partyDetailsViewModelFactory: PartyDetailsViewModel.Factory
 
     // Image loading
     val gifImageLoader: ImageLoader

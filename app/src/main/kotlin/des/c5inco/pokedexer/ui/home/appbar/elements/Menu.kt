@@ -45,6 +45,7 @@ sealed class MenuItem(
     object Items : MenuItem(R.string.itemsLabel, Type.Fire)
     object Locations : MenuItem(R.string.locationsLabel, Type.Dragon)
     object TypeCharts : MenuItem(R.string.typeChartsLabel, Type.Water)
+    object Parties : MenuItem(R.string.partiesLabel, Type.Psychic)
 }
 
 @Composable
@@ -52,7 +53,11 @@ fun Menu(
     modifier: Modifier = Modifier,
     onMenuItemSelected: (MenuItem) -> Unit = {}
 ) {
-    val menuItems = listOf(MenuItem.Pokedex, MenuItem.Moves, MenuItem.TypeCharts, MenuItem.Items)
+    val menuItems = listOf(
+        MenuItem.Pokedex, MenuItem.Moves,
+        MenuItem.TypeCharts, MenuItem.Items,
+        MenuItem.Parties
+    )
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -70,13 +75,17 @@ fun Menu(
                         onMenuItemSelected(menuItems[i])
                     }
                 }
-                PokemonTypesTheme(types = listOf(menuItems[i + 1].typeColor.name)) {
-                    MenuItemButton(
-                        modifier = Modifier.weight(1f),
-                        item = menuItems[i + 1]
-                    ) {
-                        onMenuItemSelected(menuItems[i + 1])
+                if (i + 1 < menuItems.size) {
+                    PokemonTypesTheme(types = listOf(menuItems[i + 1].typeColor.name)) {
+                        MenuItemButton(
+                            modifier = Modifier.weight(1f),
+                            item = menuItems[i + 1]
+                        ) {
+                            onMenuItemSelected(menuItems[i + 1])
+                        }
                     }
+                } else {
+                    Box(modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -140,6 +149,7 @@ fun mapMenuItemToIcon(
         MenuItem.Abilities -> R.drawable.ic_stream
         MenuItem.Items -> R.drawable.ic_store_mall_directory
         MenuItem.TypeCharts -> R.drawable.ic_genetics
+        MenuItem.Parties -> R.drawable.ic_catching_pokemon
         else -> R.drawable.ic_catching_pokemon
     }
 }
