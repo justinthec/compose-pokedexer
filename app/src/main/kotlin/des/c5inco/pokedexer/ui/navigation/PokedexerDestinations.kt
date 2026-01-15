@@ -21,4 +21,13 @@ sealed interface Screen {
 
     @Serializable
     data object TypeCharts : Screen
+
+    @Serializable
+    data object Parties : Screen
+
+    @Serializable
+    data class PartyDetails(val id: Int) : Screen
+
+    @Serializable
+    data class CreateParty(val id: Int? = null) : Screen
 }
