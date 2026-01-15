@@ -8,22 +8,26 @@ import androidx.room.TypeConverters
 import des.c5inco.pokedexer.data.abilities.AbilitiesDao
 import des.c5inco.pokedexer.data.items.ItemsDao
 import des.c5inco.pokedexer.data.moves.MovesDao
+import des.c5inco.pokedexer.data.parties.PartiesDao
 import des.c5inco.pokedexer.data.pokemon.PokemonDao
 import des.c5inco.pokedexer.model.Ability
 import des.c5inco.pokedexer.model.Evolution
 import des.c5inco.pokedexer.model.EvolutionTrigger
 import des.c5inco.pokedexer.model.Item
 import des.c5inco.pokedexer.model.Move
+import des.c5inco.pokedexer.model.Party
+import des.c5inco.pokedexer.model.PartyMember
 import des.c5inco.pokedexer.model.Pokemon
 import des.c5inco.pokedexer.model.PokemonAbility
 import des.c5inco.pokedexer.model.PokemonMove
 
 @Database(
-    version = 7,
-    entities = [Pokemon::class, Move::class, Item::class, Ability::class],
+    version = 8,
+    entities = [Pokemon::class, Move::class, Item::class, Ability::class, Party::class, PartyMember::class],
     autoMigrations = [
         AutoMigration(from = 1, to = 6),
         AutoMigration(from = 6, to = 7),
+        AutoMigration(from = 7, to = 8),
     ]
 )
 @TypeConverters(Converters::class)
@@ -32,6 +36,7 @@ abstract class PokemonDatabase : RoomDatabase() {
     abstract fun movesDao(): MovesDao
     abstract fun itemsDao(): ItemsDao
     abstract fun abilitiesDao(): AbilitiesDao
+    abstract fun partiesDao(): PartiesDao
 }
 
 class Converters {
