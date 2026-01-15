@@ -13,6 +13,7 @@ import des.c5inco.pokedexer.RootViewModel
 import des.c5inco.pokedexer.ui.home.HomeViewModel
 import des.c5inco.pokedexer.ui.items.ItemsViewModel
 import des.c5inco.pokedexer.ui.moves.MovesListViewModel
+import des.c5inco.pokedexer.ui.parties.PartiesViewModel
 import des.c5inco.pokedexer.ui.pokedex.PokedexViewModel
 
 /**
@@ -37,6 +38,7 @@ inline fun <reified T : ViewModel> metroViewModel(
             HomeViewModel::class -> homeViewModel
             MovesListViewModel::class -> movesListViewModel
             ItemsViewModel::class -> itemsViewModel
+            PartiesViewModel::class -> partiesViewModel
             PokedexViewModel::class -> pokedexViewModelFactory.create(extras.createSavedStateHandle())
             else -> throw IllegalArgumentException(
                 "Unknown ViewModel class: ${T::class.java.name}. " +
