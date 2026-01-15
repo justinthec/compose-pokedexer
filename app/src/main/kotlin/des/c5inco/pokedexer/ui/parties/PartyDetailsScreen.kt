@@ -1,15 +1,14 @@
 package des.c5inco.pokedexer.ui.parties
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -18,19 +17,24 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import des.c5inco.pokedexer.R
 import des.c5inco.pokedexer.model.Pokemon
 import des.c5inco.pokedexer.ui.common.LoadingIndicator
-import des.c5inco.pokedexer.ui.common.Pokeball
-import des.c5inco.pokedexer.ui.pokedex.PokedexCard
+import des.c5inco.pokedexer.ui.common.PokemonImage
 
 @Composable
 fun PartyDetailsScreenRoute(
@@ -61,6 +65,9 @@ fun PartyDetailsScreen(
     Scaffold(
         topBar = {
             MediumTopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent
+                ),
                 title = {
                     Text(
                         when (uiState) {
@@ -95,14 +102,18 @@ fun PartyDetailsScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Pokeball(
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
-                modifier = Modifier
-                    .size(256.dp)
-                    .align(Alignment.TopEnd)
-                    .offset(x = 90.dp, y = (-72).dp),
+            Image(
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = "file:///android_asset/backgrounds/background.webp")
+                        .apply(block = fun ImageRequest.Builder.() {
+                            crossfade(true)
+                        }).build()
+                ),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxSize()
             )
-
             when (uiState) {
                 is PartyDetailsUiState.Loading -> {
                     LoadingIndicator()
@@ -113,16 +124,20 @@ fun PartyDetailsScreen(
                     }
                 }
                 is PartyDetailsUiState.Ready -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 32.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.Bottom
                     ) {
-                        items(uiState.pokemon) { pokemon ->
-                            PokedexCard(
-                                pokemon = pokemon,
-                                onPokemonSelected = onPokemonSelected
+                        uiState.pokemon.forEachIndexed { index, pokemon ->
+                            PokemonImage(
+                                image = pokemon.id,
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .offset(x = (-48 * index).dp),
+                                onClick = { onPokemonSelected(pokemon) }
                             )
                         }
                     }

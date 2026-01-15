@@ -1,5 +1,6 @@
 package des.c5inco.pokedexer.ui.common
 
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,7 +18,8 @@ fun PokemonImage(
     modifier: Modifier = Modifier,
     image: Int,
     description: String? = null,
-    tint: Color? = null
+    tint: Color? = null,
+    onClick: () -> Unit = {},
 ) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
@@ -31,6 +33,6 @@ fun PokemonImage(
         },
         contentDescription = description,
         colorFilter = tint?.let { ColorFilter.tint(it) },
-        modifier = modifier,
+        modifier = modifier.clickable { onClick() },
     )
 }
