@@ -2,14 +2,10 @@ package des.c5inco.pokedexer.ui.parties
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -21,8 +17,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.foundation.Canvas
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,6 +35,7 @@ import des.c5inco.pokedexer.R
 import des.c5inco.pokedexer.model.Pokemon
 import des.c5inco.pokedexer.ui.common.LoadingIndicator
 import des.c5inco.pokedexer.ui.common.Pokeball
+import des.c5inco.pokedexer.ui.common.PokemonImage
 import des.c5inco.pokedexer.ui.pokedex.PokedexCard
 
 @Composable
@@ -113,19 +119,69 @@ fun PartyDetailsScreen(
                     }
                 }
                 is PartyDetailsUiState.Ready -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(uiState.pokemon) { pokemon ->
-                            PokedexCard(
-                                pokemon = pokemon,
-                                onPokemonSelected = onPokemonSelected
-                            )
-                        }
-                    }
+                    PartyDetailsScene(
+                        pokemon = uiState.pokemon,
+                        onPokemonSelected = onPokemonSelected
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SceneBackground(
+    modifier: Modifier = Modifier
+) {
+    Canvas(modifier = modifier.fillMaxSize()) {
+        drawRect(color = Color(0xFF87CEEB)) // Sky blue
+
+        drawOval(
+            color = Color.White,
+            topLeft = Offset(x = size.width * 0.1f, y = size.height * 0.2f),
+            size = Size(width = size.width * 0.4f, height = size.height * 0.2f)
+        )
+        drawOval(
+            color = Color.White,
+            topLeft = Offset(x = size.width * 0.5f, y = size.height * 0.3f),
+            size = Size(width = size.width * 0.5f, height = size.height * 0.25f)
+        )
+        drawOval(
+            color = Color.White,
+            topLeft = Offset(x = size.width * 0.8f, y = size.height * 0.15f),
+            size = Size(width = size.width * 0.45f, height = size.height * 0.22f)
+        )
+    }
+}
+
+@Composable
+fun PartyDetailsScene(
+    modifier: Modifier = Modifier,
+    pokemon: List<Pokemon>,
+    onPokemonSelected: (Pokemon) -> Unit = {}
+) {
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        SceneBackground()
+        Column(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 128.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                pokemon.forEach {
+                    PokemonImage(
+                        image = it.image,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clickable { onPokemonSelected(it) }
+                    )
                 }
             }
         }
