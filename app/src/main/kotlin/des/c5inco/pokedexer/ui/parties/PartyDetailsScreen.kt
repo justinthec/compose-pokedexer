@@ -1,5 +1,8 @@
 package des.c5inco.pokedexer.ui.parties
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,7 +23,11 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -113,21 +120,52 @@ fun PartyDetailsScreen(
                     }
                 }
                 is PartyDetailsUiState.Ready -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(uiState.pokemon) { pokemon ->
-                            PokedexCard(
-                                pokemon = pokemon,
-                                onPokemonSelected = onPokemonSelected
-                            )
-                        }
-                    }
+                    PartyPokemonLayout(
+                        modifier = Modifier.fillMaxSize(),
+                        pokemon = uiState.pokemon,
+                        onPokemonSelected = onPokemonSelected
+                    )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun PartyPokemonLayout(
+    modifier: Modifier = Modifier,
+    pokemon: List<Pokemon>,
+    onPokemonSelected: (Pokemon) -> Unit = {},
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        isExpanded = true
+    }
+
+    Box(
+        modifier = modifier.padding(24.dp)
+    ) {
+        pokemon.forEachIndexed { idx, p ->
+            val rotation by animateFloatAsState(
+                targetValue = if (isExpanded) -15f + (idx * 5f) else 0f,
+                animationSpec = tween(durationMillis = 500, delayMillis = 100 * idx)
+            )
+            val verticalOffset by animateDpAsState(
+                targetValue = if (isExpanded) (idx * 40).dp else 0.dp,
+                animationSpec = tween(durationMillis = 500, delayMillis = 100 * idx)
+            )
+
+            PokedexCard(
+                pokemon = p,
+                onPokemonSelected = onPokemonSelected,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(y = verticalOffset)
+                    .graphicsLayer {
+                        rotationZ = rotation
+                    }
+            )
         }
     }
 }
