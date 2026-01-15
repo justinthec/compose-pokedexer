@@ -23,8 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import des.c5inco.pokedexer.R
 import des.c5inco.pokedexer.model.Pokemon
@@ -113,14 +117,26 @@ fun PartyDetailsScreen(
                     }
                 }
                 is PartyDetailsUiState.Ready -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Box(
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        items(uiState.pokemon) { pokemon ->
+                        val count = uiState.pokemon.size
+                        val fanAngle = 15f
+                        val radius = with(LocalDensity.current) { 120.dp.toPx() }
+
+                        uiState.pokemon.forEachIndexed { index, pokemon ->
+                            val rotation = if (count > 1) (index.toFloat() / (count - 1) * fanAngle * 2) - fanAngle else 0f
+                            val translationX = if (count > 1) (index.toFloat() / (count - 1) * radius * 2) - radius else 0f
+
                             PokedexCard(
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .scale(0.85f)
+                                    .graphicsLayer {
+                                        this.rotationZ = rotation
+                                        this.translationX = translationX
+                                    }
+                                    .zIndex(index.toFloat()),
                                 pokemon = pokemon,
                                 onPokemonSelected = onPokemonSelected
                             )
