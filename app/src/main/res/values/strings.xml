@@ -11,6 +11,11 @@
     <string name="locationsLabel">Locations</string>
     <string name="abilitiesLabel">Abilities</string>
     <string name="typeChartsLabel">Type charts</string>
+    <string name="partiesLabel">Parties</string>
+    <string name="newPartyLabel">New Party</string>
+    <string name="createPartyLabel">Create Party</string>
+    <string name="partyNamePlaceholder">Party Name</string>
+    <string name="savePartyLabel">Save Party</string>
     <string name="searchPlaceholderText">Search Pokemon, Move, Item, etc</string>
     <string name="clearSearchContentDescription">Clear search</string>
     <string name="backActionContentDescription">Back</string>
@@ -22,6 +27,7 @@
     <string name="levelTableHeader">Lvl</string>
     <string name="favoritesActionContentDescription">%1$s from Favorites</string>
     <string name="removeActionContentDescription">Remove</string>
+    <string name="deleteActionContentDescription">Delete</string>
     <string name="addActionContentDescription">Add</string>
     <string name="evolutionLabel">Evolution</string>
     <string name="baseStatsLabel">Base stats</string>
