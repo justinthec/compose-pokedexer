@@ -23,6 +23,9 @@ import des.c5inco.pokedexer.ui.home.appbar.elements.MenuItem
 import des.c5inco.pokedexer.ui.items.ItemsScreenRoute
 import des.c5inco.pokedexer.ui.moves.MovesListScreenRoute
 import des.c5inco.pokedexer.ui.navigation.Screen
+import des.c5inco.pokedexer.ui.parties.CreatePartyScreenRoute
+import des.c5inco.pokedexer.ui.parties.PartiesScreenRoute
+import des.c5inco.pokedexer.ui.parties.PartyDetailsScreenRoute
 import des.c5inco.pokedexer.ui.pokedex.PokedexScreenRoute
 import des.c5inco.pokedexer.ui.pokedex.PokemonDetailsScreenRoute
 import des.c5inco.pokedexer.ui.typechart.TypeChartScreenRoute
@@ -64,15 +67,6 @@ fun PokedexerApp(
             onBack = {
                 if (backStack.size > 1) {
                     backStack.removeAt(backStack.lastIndex)
-                } else {
-                    // TODO: Resolve what this does
-                    // Quit app
-                    // (context as? Activity)?.finish()
-                    // or just let system handle back?
-                    // For now, if size is 1, onBack typically doesn't trigger if handled by system back handler?
-                    // Actually NavDisplay might request back handling.
-                    // If we want to exit, we usually don't verify strict size > 1 here if back handler is intercepted.
-                    // But simplest is removeLast.
                 }
             },
             transitionSpec = {
@@ -96,17 +90,13 @@ fun PokedexerApp(
                         HomeScreenRoute(
                             viewModel = metroViewModel(),
                             onMenuItemSelected = {
-                                if (it == MenuItem.Pokedex) {
-                                    backStack.add(Screen.Pokedex)
-                                }
-                                if (it == MenuItem.Moves) {
-                                    backStack.add(Screen.Moves)
-                                }
-                                if (it == MenuItem.Items) {
-                                    backStack.add(Screen.Items)
-                                }
-                                if (it == MenuItem.TypeCharts) {
-                                    backStack.add(Screen.TypeCharts)
+                                when (it) {
+                                    MenuItem.Pokedex -> backStack.add(Screen.Pokedex)
+                                    MenuItem.Moves -> backStack.add(Screen.Moves)
+                                    MenuItem.Items -> backStack.add(Screen.Items)
+                                    MenuItem.TypeCharts -> backStack.add(Screen.TypeCharts)
+                                    MenuItem.Parties -> backStack.add(Screen.Parties)
+                                    else -> {}
                                 }
                             },
                             onSearchResultSelected = {
@@ -122,8 +112,6 @@ fun PokedexerApp(
                         )
                     }
                     Screen.Pokedex -> {
-                        // Extract the pokemon ID from the previous screen (if it was PokemonDetails)
-                        // so we can scroll to it when returning from the details screen
                         val pastPokemonId = (backStack.getOrNull(backStack.lastIndex - 1) as? Screen.PokemonDetails)?.id
                         
                         PokedexScreenRoute(
@@ -137,7 +125,7 @@ fun PokedexerApp(
                     }
                     is Screen.PokemonDetails -> {
                         PokemonDetailsScreenRoute(
-                            detailsViewModel = metroViewModel { pokemonDetailsViewModelFactory.create(screen.id) },
+                            detailsViewModel = metroViewModel(key = screen.id.toString()) { pokemonDetailsViewModelFactory.create(screen.id) },
                             onBackClick = {
                                 backStack.removeAt(backStack.lastIndex)
                             }
@@ -158,6 +146,34 @@ fun PokedexerApp(
                     Screen.TypeCharts -> {
                         TypeChartScreenRoute(
                             onBackClick = { backStack.removeAt(backStack.lastIndex) }
+                        )
+                    }
+                    Screen.Parties -> {
+                        PartiesScreenRoute(
+                            viewModel = metroViewModel(),
+                            onPartySelected = {
+                                backStack.add(Screen.PartyDetails(it))
+                            },
+                            onCreateParty = {
+                                backStack.add(Screen.CreateParty())
+                            },
+                            onBackClick = { backStack.removeAt(backStack.lastIndex) }
+                        )
+                    }
+                    is Screen.PartyDetails -> {
+                        PartyDetailsScreenRoute(
+                            viewModel = metroViewModel(key = screen.id.toString()) { partyDetailsViewModelFactory.create(screen.id) },
+                            onPokemonSelected = {
+                                backStack.add(Screen.PokemonDetails(it.id))
+                            },
+                            onBackClick = { backStack.removeAt(backStack.lastIndex) }
+                        )
+                    }
+                    is Screen.CreateParty -> {
+                        CreatePartyScreenRoute(
+                            viewModel = metroViewModel(key = screen.toString()) { createPartyViewModelFactory.create(screen.id) },
+                            onBackClick = { backStack.removeAt(backStack.lastIndex) },
+                            onSuccess = { backStack.removeAt(backStack.lastIndex) }
                         )
                     }
                 }
