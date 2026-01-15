@@ -1,15 +1,10 @@
 package des.c5inco.pokedexer.ui.parties
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -28,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import des.c5inco.pokedexer.R
 import des.c5inco.pokedexer.model.Pokemon
+import des.c5inco.pokedexer.ui.common.FanLayout
 import des.c5inco.pokedexer.ui.common.LoadingIndicator
 import des.c5inco.pokedexer.ui.common.Pokeball
 import des.c5inco.pokedexer.ui.pokedex.PokedexCard
@@ -113,18 +109,17 @@ fun PartyDetailsScreen(
                     }
                 }
                 is PartyDetailsUiState.Ready -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(uiState.pokemon) { pokemon ->
-                            PokedexCard(
-                                pokemon = pokemon,
-                                onPokemonSelected = onPokemonSelected
-                            )
-                        }
+                    FanLayout(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 96.dp),
+                        items = uiState.pokemon,
+                    ) { pokemon ->
+                        PokedexCard(
+                            modifier = Modifier.size(200.dp, 140.dp),
+                            pokemon = pokemon,
+                            onPokemonSelected = onPokemonSelected
+                        )
                     }
                 }
             }
