@@ -30,7 +30,7 @@ fun <T> FanLayout(
                 modifier = Modifier
                     .graphicsLayer {
                         rotationZ = rotation
-                        transformOrigin = TransformOrigin.BottomCenter
+                        transformOrigin = TransformOrigin(0.5f, 1f)
                     }
                     .zIndex(index.toFloat())
             ) {
